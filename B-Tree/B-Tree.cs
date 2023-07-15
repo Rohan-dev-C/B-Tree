@@ -1,4 +1,7 @@
-﻿using System;
+﻿
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,11 +17,11 @@ namespace BTree
         public bool isLeafNode => Children.Count == 0;
         public List<Node<T>> Children { get; } = new List<Node<T>>(3);
         public Node(T value)
-        {
+        {            
             Values.Add(value);
         }
 
-        private void SwapValuesIfNeeded()
+        public void SwapValues()
         {
             if (Values[0].CompareTo(Values[1]) <= 0) return;
 
@@ -95,9 +98,51 @@ namespace BTree
                 curr = curr.Children[curr.Children.Count - 1];
             } while (true);
         }
+        
+        public Node<T> findParent(T value, bool returnLastCheckedNodeOrNull) //FIX tHIS
+        {
+            var curr = rootNode;
+            do
+            {
+                bool shouldContinue = false;
+                for (int i = 0; i < curr.Values.Count; i++)
+                {
+                    if (curr.Values[i].CompareTo(value) == 0) return curr;
 
-      
+                    if (curr.Values[i].CompareTo(value) > 0)
+                    {
+                        if (curr.isLeafNode)
+                        {
+                            if (!returnLastCheckedNodeOrNull)
+                            {
+                                return null;
+                            }
+                            else
+                            {
+                                return curr;
+                            }
+                        }
 
+                        curr = curr.Children[i];
+                        shouldContinue = true;
+                        break;
+                    }
+                }
+                if (shouldContinue) { continue; }
+                if (curr.isLeafNode)
+                {
+                    if (!returnLastCheckedNodeOrNull)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return curr;
+                    }
+                }
+                curr = curr.Children[curr.Children.Count - 1];
+            } while (true);
+        }
 
         public void Add(T value)
         {
@@ -110,19 +155,19 @@ namespace BTree
 
             var insertionNode = Find(value, true);
             insertionNode.Values.Add(value);
-            insertionNode.Values.Sort();
-
+            insertionNode.SwapValues();
+             
             if(insertionNode.Values.Count == maxDegree)
             {
-                //return tuple from function & need to find parent from find function
+                               //return tuple from function & need to find parent from find function
                 // or need parent links instead
             }
 
 
             // The node might now have maxDegree values
-            // time to split it!
+            // then split
             // Middle value is given up to parent
-
+             
 
 
         }
