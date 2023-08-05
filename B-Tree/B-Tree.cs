@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -99,7 +100,7 @@ namespace BTree
             } while (true);
         }
         
-        public Node<T> findParent(T value, bool returnLastCheckedNodeOrNull) //FIX tHIS
+        public Node<T> FindParent(T value, bool returnLastCheckedNodeOrNull) //FIX tHIS
         {
             var curr = rootNode;
             do
@@ -144,24 +145,39 @@ namespace BTree
             } while (true);
         }
 
-        public void Add(T value)
+
+
+        public Node<T> Add(T value)
         {
             if (rootNode == null)
             {
                 rootNode = new Node<T>(value);
                 Count++;
-                return;
+                return rootNode;
             }
 
-            var insertionNode = Find(value, true);
-            insertionNode.Values.Add(value);
-            insertionNode.SwapValues();
-             
-            if(insertionNode.Values.Count == maxDegree)
+            var insertedNode= Add(value);
+            for (int i = 0; i < insertedNode.Children.Count; i++)
             {
-                               //return tuple from function & need to find parent from find function
-                // or need parent links instead
+                if (insertedNode.Children.Count >= maxDegree - 1)
+                {
+                    var temp = insertedNode.Children[i].Values[1];
+                    insertedNode.Children[i].Values.Remove(temp); 
+                    insertedNode.Values.Add(temp);
+                }
+                
             }
+            return insertedNode; 
+        }
+
+             
+            //if(insertionNode.Values.Count == maxDegree)
+            //{  
+
+            //     //return tuple from function & need to find parent from find function
+            //    // or need parent links instead
+            //}
+
 
 
             // The node might now have maxDegree values
@@ -170,7 +186,6 @@ namespace BTree
              
 
 
-        }
 
     }
 }

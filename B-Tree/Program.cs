@@ -29,6 +29,7 @@ namespace BTree
             ;
 
             var isPresent = tree.Find(11, true);
+            var findParent = tree.Find(12, true); 
             ;
         }
     }
