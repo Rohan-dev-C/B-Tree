@@ -18,7 +18,7 @@ namespace BTree
             tree.rootNode.Children[1].Children.Add(new Node<int> (5));
             tree.rootNode.Children[1].Children.Add(new Node<int> (7));
             tree.rootNode.Children[2].Children.Add(new Node<int> (9));
-            tree.rootNode.Children[2].Children.Add(new Node<int> (12));
+            tree.rootNode.Children[2].Children.Add(new Node<int> (11));
 
 
 
@@ -29,7 +29,8 @@ namespace BTree
             ;
 
             var isPresent = tree.Find(11, true);
-            var findParent = tree.Find(12, true); 
+            var findParent = tree.FindParent(11, true);
+           var addedNotes = tree.AddNode(12, ref tree);
             ;
         }
     }

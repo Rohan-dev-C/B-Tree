@@ -17,6 +17,7 @@ namespace BTree
 
         public bool isLeafNode => Children.Count == 0;
         public List<Node<T>> Children { get; } = new List<Node<T>>(3);
+
         public Node(T value)
         {            
             Values.Add(value);
@@ -100,15 +101,16 @@ namespace BTree
             } while (true);
         }
         
-        public Node<T> FindParent(T value, bool returnLastCheckedNodeOrNull) //FIX tHIS
+        public Node<T> FindParent(T value, bool returnLastCheckedNodeOrNull)
         {
             var curr = rootNode;
+            var prev = rootNode;
             do
             {
                 bool shouldContinue = false;
                 for (int i = 0; i < curr.Values.Count; i++)
                 {
-                    if (curr.Values[i].CompareTo(value) == 0) return curr;
+                    if (curr.Values[i].CompareTo(value) == 0) return prev;
 
                     if (curr.Values[i].CompareTo(value) > 0)
                     {
@@ -120,10 +122,9 @@ namespace BTree
                             }
                             else
                             {
-                                return curr;
+                                return prev;
                             }
                         }
-
                         curr = curr.Children[i];
                         shouldContinue = true;
                         break;
@@ -138,15 +139,31 @@ namespace BTree
                     }
                     else
                     {
-                        return curr;
+                        return prev;
                     }
                 }
+                prev = curr;
                 curr = curr.Children[curr.Children.Count - 1];
             } while (true);
         }
 
+        public Node<T> AddNode(T value, ref BTree<T> tree) // check balance 
+        {
+            var NodeToAddChildTo = FindParent(value, true);
+            var AddToNode = Find(value, true);
 
+            for (int i = 0; i < NodeToAddChildTo.Children.Count; i++)
+            {
+                if (NodeToAddChildTo.Children[i].Values.Equals(AddToNode.Values))
+                {
+                    NodeToAddChildTo.Children[i].Values.Add(value);
+                    return AddToNode;
+                }
+            }
+            NodeToAddChildTo.Children.Add(new Node<T>(value));
+            return Find(value, true);
 
+        }
         public Node<T> Add(T value)
         {
             if (rootNode == null)
@@ -155,6 +172,8 @@ namespace BTree
                 Count++;
                 return rootNode;
             }
+
+            var FoundNode = this.Find(value, true);
 
             var insertedNode= Add(value);
             for (int i = 0; i < insertedNode.Children.Count; i++)
