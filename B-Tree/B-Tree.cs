@@ -147,7 +147,7 @@ namespace BTree
             } while (true);
         }
 
-        public Node<T> AddNode(T value, ref BTree<T> tree) // check balance 
+        public Node<T> AddNode(T value) // check balance 
         {
             var NodeToAddChildTo = FindParent(value, true);
             var AddToNode = Find(value, true);
@@ -164,45 +164,76 @@ namespace BTree
             return Find(value, true);
 
         }
-        public Node<T> Add(T value)
+
+        public void Add(T value)
         {
             if (rootNode == null)
             {
                 rootNode = new Node<T>(value);
                 Count++;
-                return rootNode;
+                return;
             }
 
-            var FoundNode = this.Find(value, true);
-
-            var insertedNode= Add(value);
-            for (int i = 0; i < insertedNode.Children.Count; i++)
-            {
-                if (insertedNode.Children.Count >= maxDegree - 1)
-                {
-                    var temp = insertedNode.Children[i].Values[1];
-                    insertedNode.Children[i].Values.Remove(temp); 
-                    insertedNode.Values.Add(temp);
-                }
-                
-            }
-            return insertedNode; 
+            Add(value, rootNode);
         }
 
-             
-            //if(insertionNode.Values.Count == maxDegree)
-            //{  
+        private void Add(T value, Node<T> curr)
+        {
+            for (int i = 0; i < curr.Values.Count; i++)
+            {
+                if (curr.Values[i].CompareTo(value) < 0) 
+                {
+                    if (curr.Children.Count == 0)
+                    {
+                        curr.Values.Insert(i, value);
+                        return;
+                    }
+                    Add(value, curr.Children[i]); 
+                //going up Balance
+                }
+            }
+        }
 
-            //     //return tuple from function & need to find parent from find function
-            //    // or need parent links instead
-            //}
+        //public Node<T> Add(T value)
+        //{
+        //    if (rootNode == null)
+        //    {
+        //        rootNode = new Node<T>(value);
+        //        Count++;
+        //        return rootNode;
+        //    }
+
+        //    var FoundNode = this.Find(value, true);
+
+        //    var insertedNode = AddNode(FoundNode); 
+        //    for (int i = 0; i < insertedNode.Children.Count; i++)
+        //    {
+        //        if (insertedNode.Children.Count >= maxDegree - 1)
+        //        {
+        //            var temp = insertedNode.Children[i].Values[1];
+        //            insertedNode.Children[i].Values.Remove(temp); 
+        //            insertedNode.Values.Add(temp);
+        //        }
+
+        //    }
+        //    return insertedNode; 
+
+        //}
+
+
+        //if(insertionNode.Values.Count == maxDegree)
+        //{  
+
+        //     //return tuple from function & need to find parent from find function
+        //    // or need parent links instead
+        //}
 
 
 
-            // The node might now have maxDegree values
-            // then split
-            // Middle value is given up to parent
-             
+        // The node might now have maxDegree values
+        // then split
+        // Middle value is given up to parent
+
 
 
 
