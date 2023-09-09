@@ -162,7 +162,41 @@ namespace BTree
             }
             NodeToAddChildTo.Children.Add(new Node<T>(value));
             return Find(value, true);
+        }
 
+        public void Split(Node<T> node, Node<T> child)
+        {
+            var parent = node; 
+            
+            if (child.Values.Count >= maxDegree)
+            {
+                parent.Values.Add(child.Values[1]);
+                child.Values.RemoveAt(1);
+                var ChildrenofChildren = child.Children; 
+                var newChild1 = new Node<T>(child.Values[0]);
+                var newChild2 = new Node<T>(child.Values[1]); 
+                parent.Children.Remove(child); 
+                parent.Children.Add(newChild1); 
+                parent.Children.Add(newChild2);
+                if (ChildrenofChildren.Count > 0)
+                {
+                    newChild1.Children.Add(ChildrenofChildren[0]);
+                    newChild2.Children.Add(ChildrenofChildren[1]);
+                }
+            }
+        }
+        
+        public void SplitRoot()
+        {
+            if (rootNode.Values.Count >= maxDegree)
+            {
+                var temp = rootNode.Values[1];
+                var newRoot = new Node<T>(rootNode.Values[1]);
+                Split(newRoot, rootNode);
+                rootNode = newRoot;
+                rootNode.Values.Remove(temp);
+                Count++; 
+            }
         }
 
         public void Add(T value)
@@ -173,8 +207,8 @@ namespace BTree
                 Count++;
                 return;
             }
-
             Add(value, rootNode);
+            SplitRoot(); 
         }
 
         private void Add(T value, Node<T> curr)
@@ -186,10 +220,11 @@ namespace BTree
                     if (curr.Children.Count == 0)
                     {
                         curr.Values.Insert(i, value);
+                        Count++; 
                         return;
                     }
-                    Add(value, curr.Children[i]); 
-                //going up Balance
+                    Add(value, curr.Children[i]);
+                    Split(curr, curr.Children[i]); 
                 }
             }
         }
