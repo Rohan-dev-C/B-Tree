@@ -16,14 +16,6 @@ namespace BTree
                 tree.Add(random.Next(0, 100)); 
             }
           
-
-            //tree.Add(5);
-            //tree.Add(6);
-            ;
-
-            var isPresent = tree.Find(11, true);
-            var findParent = tree.FindParent(11, true);
-           var addedNotes = tree.AddNode(12);
             ;
         }
     }

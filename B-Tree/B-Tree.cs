@@ -147,7 +147,7 @@ namespace BTree
             } while (true);
         }
 
-        public Node<T> AddNode(T value) // check balance 
+        public Node<T> AddNode(T value)
         {
             var NodeToAddChildTo = FindParent(value, true);
             var AddToNode = Find(value, true);
@@ -164,35 +164,49 @@ namespace BTree
             return Find(value, true);
         }
 
-        public void Split(Node<T> node, Node<T> child)
+        public void Split(Node<T> parent, Node<T> child, int childIndex)
         {
-            var parent = node; 
+  
             
             if (child.Values.Count >= maxDegree)
             {
-                parent.Values.Add(child.Values[1]);
+                parent.Values.Insert(childIndex, child.Values[1]);
                 child.Values.RemoveAt(1);
                 var ChildrenofChildren = child.Children; 
                 var newChild1 = new Node<T>(child.Values[0]);
                 var newChild2 = new Node<T>(child.Values[1]); 
-                parent.Children.Remove(child); 
-                parent.Children.Add(newChild1); 
-                parent.Children.Add(newChild2);
                 if (ChildrenofChildren.Count > 0)
                 {
                     newChild1.Children.Add(ChildrenofChildren[0]);
-                    newChild2.Children.Add(ChildrenofChildren[1]);
+                    newChild1.Children.Add(ChildrenofChildren[1]);
+                    newChild2.Children.Add(ChildrenofChildren[2]);
+                    newChild2.Children.Add(ChildrenofChildren[3]);
                 }
+                parent.Children.Insert(childIndex,newChild1); 
+                parent.Children.Insert(childIndex+1,newChild2);
+                parent.Children.RemoveAt(childIndex); 
             }
         }
-        
+  
+
         public void SplitRoot()
         {
             if (rootNode.Values.Count >= maxDegree)
             {
                 var temp = rootNode.Values[1];
-                var newRoot = new Node<T>(rootNode.Values[1]);
-                Split(newRoot, rootNode);
+                var newRoot = new Node<T>(temp);
+                var ChildrenofChildren = rootNode.Children;
+                var newChild1 = new Node<T>(rootNode.Values[0]);
+                var newChild2 = new Node<T>(rootNode.Values[1]);
+                newRoot.Children.Add(newChild1);   
+                newRoot.Children.Add(newChild2);
+                if (ChildrenofChildren.Count > 0)
+                {
+                    newChild1.Children.Add(ChildrenofChildren[0]);
+                    newChild1.Children.Add(ChildrenofChildren[1]);
+                    newChild2.Children.Add(ChildrenofChildren[2]);
+                    newChild2.Children.Add(ChildrenofChildren[3]);
+                }
                 rootNode = newRoot;
                 rootNode.Values.Remove(temp);
                 Count++; 
@@ -224,7 +238,7 @@ namespace BTree
                         return;
                     }
                     Add(value, curr.Children[i]);
-                    Split(curr, curr.Children[i]); 
+                    Split(curr, curr.Children[i], i); 
                 }
             }
         }
