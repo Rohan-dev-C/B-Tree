@@ -10,10 +10,15 @@ namespace BTree
 
             Random random = new Random(45);
             var amount = random.Next(6, 21);
-            ;
+            var values = new int[amount];
+
             for (int i = 0; i < amount; i++)
             {
-                tree.Add(random.Next(0, 100)); 
+                values[i] = random.Next(0, 100);
+            }
+            for (int i = 0; i < amount; i++)
+            {
+                tree.Add(values[i]); 
             }
           
             ;

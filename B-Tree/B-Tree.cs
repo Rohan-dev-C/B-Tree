@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -166,8 +163,6 @@ namespace BTree
 
         public void Split(Node<T> parent, Node<T> child, int childIndex)
         {
-  
-            
             if (child.Values.Count >= maxDegree)
             {
                 parent.Values.Insert(childIndex, child.Values[1]);
@@ -182,9 +177,9 @@ namespace BTree
                     newChild2.Children.Add(ChildrenofChildren[2]);
                     newChild2.Children.Add(ChildrenofChildren[3]);
                 }
+                parent.Children.RemoveAt(childIndex); 
                 parent.Children.Insert(childIndex,newChild1); 
                 parent.Children.Insert(childIndex+1,newChild2);
-                parent.Children.RemoveAt(childIndex); 
             }
         }
   
@@ -197,7 +192,7 @@ namespace BTree
                 var newRoot = new Node<T>(temp);
                 var ChildrenofChildren = rootNode.Children;
                 var newChild1 = new Node<T>(rootNode.Values[0]);
-                var newChild2 = new Node<T>(rootNode.Values[1]);
+                var newChild2 = new Node<T>(rootNode.Values[2]);
                 newRoot.Children.Add(newChild1);   
                 newRoot.Children.Add(newChild2);
                 if (ChildrenofChildren.Count > 0)
@@ -207,8 +202,8 @@ namespace BTree
                     newChild2.Children.Add(ChildrenofChildren[2]);
                     newChild2.Children.Add(ChildrenofChildren[3]);
                 }
-                rootNode = newRoot;
                 rootNode.Values.Remove(temp);
+                rootNode = newRoot;
                 Count++; 
             }
         }
@@ -238,53 +233,16 @@ namespace BTree
                         return;
                     }
                     Add(value, curr.Children[i]);
-                    Split(curr, curr.Children[i], i); 
+                    Split(curr, curr.Children[i], i);
+                    return;
                 }
             }
+            if (curr.Children.Count == 3)
+            {
+                Add(value, curr.Children[curr.Children.Count - 1]);
+                Split(curr, curr.Children[curr.Children.Count - 1], curr.Children.Count - 1);
+                return;
+            }
         }
-
-        //public Node<T> Add(T value)
-        //{
-        //    if (rootNode == null)
-        //    {
-        //        rootNode = new Node<T>(value);
-        //        Count++;
-        //        return rootNode;
-        //    }
-
-        //    var FoundNode = this.Find(value, true);
-
-        //    var insertedNode = AddNode(FoundNode); 
-        //    for (int i = 0; i < insertedNode.Children.Count; i++)
-        //    {
-        //        if (insertedNode.Children.Count >= maxDegree - 1)
-        //        {
-        //            var temp = insertedNode.Children[i].Values[1];
-        //            insertedNode.Children[i].Values.Remove(temp); 
-        //            insertedNode.Values.Add(temp);
-        //        }
-
-        //    }
-        //    return insertedNode; 
-
-        //}
-
-
-        //if(insertionNode.Values.Count == maxDegree)
-        //{  
-
-        //     //return tuple from function & need to find parent from find function
-        //    // or need parent links instead
-        //}
-
-
-
-        // The node might now have maxDegree values
-        // then split
-        // Middle value is given up to parent
-
-
-
-
     }
 }
