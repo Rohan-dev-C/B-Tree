@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BTree
 {
@@ -16,7 +12,7 @@ namespace BTree
         public List<Node<T>> Children { get; } = new List<Node<T>>(3);
 
         public Node(T value)
-        {            
+        {
             Values.Add(value);
         }
 
@@ -26,15 +22,6 @@ namespace BTree
 
             (Values[0], Values[1]) = (Values[1], Values[0]);
         }
-
-
-        //public Node(Node<T> twoNodeToUpgrade, T valueToAdd)
-        //{
-        //    if (twoNodeToUpgrade.Values.Count != 1) throw new InvalidOperationException("bug"); 
-
-        //    Values = new List<T> { twoNodeToUpgrade.Values[0], valueToAdd };
-        //    SwapValuesIfNeeded();
-        //}
     }
 
 
@@ -97,7 +84,7 @@ namespace BTree
                 curr = curr.Children[curr.Children.Count - 1];
             } while (true);
         }
-        
+
         public Node<T> FindParent(T value, bool returnLastCheckedNodeOrNull)
         {
             var curr = rootNode;
@@ -167,9 +154,9 @@ namespace BTree
             {
                 parent.Values.Insert(childIndex, child.Values[1]);
                 child.Values.RemoveAt(1);
-                var ChildrenofChildren = child.Children; 
+                var ChildrenofChildren = child.Children;
                 var newChild1 = new Node<T>(child.Values[0]);
-                var newChild2 = new Node<T>(child.Values[1]); 
+                var newChild2 = new Node<T>(child.Values[1]);
                 if (ChildrenofChildren.Count > 0)
                 {
                     newChild1.Children.Add(ChildrenofChildren[0]);
@@ -177,12 +164,12 @@ namespace BTree
                     newChild2.Children.Add(ChildrenofChildren[2]);
                     newChild2.Children.Add(ChildrenofChildren[3]);
                 }
-                parent.Children.RemoveAt(childIndex); 
-                parent.Children.Insert(childIndex,newChild1); 
-                parent.Children.Insert(childIndex+1,newChild2);
+                parent.Children.RemoveAt(childIndex);
+                parent.Children.Insert(childIndex, newChild1);
+                parent.Children.Insert(childIndex + 1, newChild2);
             }
         }
-  
+
 
         public void SplitRoot()
         {
@@ -193,7 +180,7 @@ namespace BTree
                 var ChildrenofChildren = rootNode.Children;
                 var newChild1 = new Node<T>(rootNode.Values[0]);
                 var newChild2 = new Node<T>(rootNode.Values[2]);
-                newRoot.Children.Add(newChild1);   
+                newRoot.Children.Add(newChild1);
                 newRoot.Children.Add(newChild2);
                 if (ChildrenofChildren.Count > 0)
                 {
@@ -204,7 +191,7 @@ namespace BTree
                 }
                 rootNode.Values.Remove(temp);
                 rootNode = newRoot;
-                Count++; 
+                Count++;
             }
         }
 
@@ -217,32 +204,34 @@ namespace BTree
                 return;
             }
             Add(value, rootNode);
-            SplitRoot(); 
+            SplitRoot();
         }
 
         private void Add(T value, Node<T> curr)
         {
+            void Insert(int i)
+            {
+                if (curr.Children.Count == 0)
+                {
+                    curr.Values.Insert(i, value);
+                    Count++;
+                    return;
+                }
+                Add(value, curr.Children[i]);
+                Split(curr, curr.Children[i], i);
+            }
+
             for (int i = 0; i < curr.Values.Count; i++)
             {
-                if (curr.Values[i].CompareTo(value) < 0) 
+                if (curr.Values[i].CompareTo(value) < 0)
                 {
-                    if (curr.Children.Count == 0)
-                    {
-                        curr.Values.Insert(i, value);
-                        Count++; 
-                        return;
-                    }
-                    Add(value, curr.Children[i]);
-                    Split(curr, curr.Children[i], i);
+                    Insert(i);
                     return;
                 }
             }
-            if (curr.Children.Count == 3)
-            {
-                Add(value, curr.Children[curr.Children.Count - 1]);
-                Split(curr, curr.Children[curr.Children.Count - 1], curr.Children.Count - 1);
-                return;
-            }
+            Insert(curr.Values.Count - 1);
+            return;
+
         }
     }
 }

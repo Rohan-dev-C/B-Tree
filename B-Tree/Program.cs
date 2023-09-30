@@ -20,7 +20,7 @@ namespace BTree
             {
                 tree.Add(values[i]); 
             }
-          
+            // 6 breaks it
             ;
         }
     }
