@@ -22,6 +22,17 @@ namespace BTree
 
             (Values[0], Values[1]) = (Values[1], Values[0]);
         }
+
+        public override string ToString()
+        {
+            string vals = "";
+            foreach (var item in Values)
+            {
+                vals += $"{item}, ";
+            }
+            return $"keys: {vals}";
+        }
+
     }
 
 
@@ -36,8 +47,6 @@ namespace BTree
             Count = 0;
             rootNode = null;
         }
-
-
 
         public Node<T> Find(T value, bool returnLastCheckedNodeOrNull)
         {
@@ -229,7 +238,7 @@ namespace BTree
                     return;
                 }
             }
-            Insert(curr.Values.Count - 1);
+            Insert(curr.Values.Count);
             return;
 
         }

@@ -8,7 +8,7 @@ namespace BTree
         {
             BTree<int> tree = new BTree<int>();
 
-            Random random = new Random(45);
+            Random random = new Random(55);
             var amount = random.Next(6, 21);
             var values = new int[amount];
 
